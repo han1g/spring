@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.mapper.TimeMapperXml">
+  <select id="getTime" resultType="String">
+    select sysdate from dual
+  </select>
+</mapper>
+<!-- <mybatis-spring:scan base-package="org.zerock.mapper"/>로 매퍼xml 스캔 -->
+<!-- mapper패키지 스캔할 때 리소스도폴더도 같이 읽음 -->
+<!-- xml파일명이랑 mapper인터페이스 파일명 맞춰야함 -->
