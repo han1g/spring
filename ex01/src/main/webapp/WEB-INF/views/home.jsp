@@ -9,6 +9,7 @@
 	Hello world!  
 </h1>
 
-<P>  The time on the server is ${serverTime}. </P>
+<P>  duedate : ${sampleDto.dueDate}. </P>
+<P>  page : ${page}. </P>
 </body>
 </html>
