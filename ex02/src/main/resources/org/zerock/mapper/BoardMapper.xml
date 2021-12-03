@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.mapper.BoardMapper">
+	<select id="getList" resultType="org.zerock.domain.BoardVO">
+		<![CDATA[
+			select * from tbl_board where bno > 0
+		]]>
+	</select>
+	
+	<insert id="insert">
+		insert into tbl_board (bno,title,content,writer)
+		values (SEQ_BOARD.nextval, #{title},#{content},#{writer})
+	</insert>
+	<!-- 그냥 넣기 -->
+	<insert id="insertSelectKey">
+		<selectKey keyProperty="bno" order="BEFORE" resultType="long"> 
+			select SEQ_BOARD.nextval FROM dual
+		</selectKey>
+		<!-- insert하기 "전"에 파라미터로 들어온 객체의 keyProperty에 값을 넣어줌 -->
+		insert into tbl_board (bno,title,content,writer)
+		values (#{bno}, #{title},#{content},#{writer})
+	</insert>
+	
+	<delete id="delete" >
+		delete from tbl_board where bno = #{bno}	
+	</delete>
+	
+	<update id="update">
+		update tbl_board set
+			title = #{title},
+			content = #{content},
+			writer = #{writer},
+			updateDate = sysdate where bno = #{bno}
+	</update>
+	
+	<select id="get" resultType="org.zerock.domain.BoardVO">
+			select * from tbl_board where bno = #{bno}
+	</select>
+</mapper>
