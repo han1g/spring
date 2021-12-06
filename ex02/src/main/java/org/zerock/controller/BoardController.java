@@ -45,8 +45,6 @@ public class BoardController {
 		model.getModel().forEach((key,value) ->{
 			log.info("key:" + key + "  value:" + value);
 		});
-		
-		model.setViewName("forward:/board/forward");
 		return model;
 	}
 	
