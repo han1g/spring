@@ -40,7 +40,9 @@ public class BoardControllerTest {
 	
 	@Test
 	public void testList() throws Exception {
-		ModelAndView mv = mockMvc.perform(MockMvcRequestBuilders.get("/board/list")).andReturn().getModelAndView();
+		ModelAndView mv = mockMvc.perform(MockMvcRequestBuilders.get("/board/list")
+				.param("pageNum", "1")
+				.param("amount","50")).andReturn().getModelAndView();
 		log.info(mv.getModelMap());
 		//requestBuilder로 get요청 발생시키고 perform으로 실행함
 		//url요청은 컨트롤러의 내부 로직을 따름
@@ -75,7 +77,7 @@ public class BoardControllerTest {
 	@Test
 	public void testget() throws Exception {
 		log.info(mockMvc.perform(MockMvcRequestBuilders.get("/board/get")
-				.param("bno", "2")
+				.param("bno", "3")
 				).andReturn().getModelAndView().getModelMap());
 		//
 		

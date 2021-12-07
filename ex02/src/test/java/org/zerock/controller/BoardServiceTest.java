@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.zerock.domain.BoardVO;
+import org.zerock.domain.Criteria;
 import org.zerock.service.BoardService;
 
 import lombok.Setter;
@@ -35,6 +36,17 @@ public class BoardServiceTest {
 		board.setWriter("writer");
 		
 		boardService.register(board);
+	}
+	@Test
+	public void testList() {
+		
+		boardService.getList(new Criteria(3,10));
+	}
+	
+	@Test
+	public void totalTest() {
+		int total = boardService.getTotal(new Criteria());
+		log.info(total);
 	}
 	
 }

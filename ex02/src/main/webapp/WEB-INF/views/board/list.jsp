@@ -6,58 +6,17 @@
 <html lang="en">
 
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="">
-<meta name="author" content="">
-
 <title>SB Admin 2 - Bootstrap Admin Theme</title>
-
-<!-- Bootstrap Core CSS -->
-<link href="/resources/vendor/bootstrap/css/bootstrap.min.css"
-	rel="stylesheet">
-
-<!-- MetisMenu CSS -->
-<link href="/resources/vendor/metisMenu/metisMenu.min.css"
-	rel="stylesheet">
-
-<!-- DataTables CSS -->
-<link
-	href="/resources/vendor/datatables-plugins/dataTables.bootstrap.css"
-	rel="stylesheet">
-
-<!-- DataTables Responsive CSS -->
-<link
-	href="/resources/vendor/datatables-responsive/dataTables.responsive.css"
-	rel="stylesheet">
-
-<!-- Custom CSS -->
-<link href="/resources/dist/css/sb-admin-2.css" rel="stylesheet">
-
-<!-- Custom Fonts -->
-<link href="/resources/vendor/font-awesome/css/font-awesome.min.css"
-	rel="stylesheet" type="text/css">
-
-<!-- jQuery -->
-<script src="/resources/vendor/jquery/jquery.min.js"></script>
-
-<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
+	<%@ include file="../includes/import.jsp" %>
 </head>
 
 <body>
 	<div id="wrapper">
-	<%@ include file="../includes/header.jsp" %>
+	<%@ include file="../includes/nav.jsp" %>
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Tables</h1>
+					<h1 class="page-header">Board List</h1>
 				</div>
 				<!-- /.col-lg-12 -->
 			</div>
@@ -65,8 +24,11 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="panel panel-default">
-						<div class="panel-heading">DataTables Advanced Tables</div>
+						<div class="panel-heading">Board List
+						<a href="/board/register" class="btn btn-xs pull-right">reigister</a>
+						</div>
 						<!-- /.panel-heading -->
+						
 						<div class="panel-body">
 							<table class="table table-striped table-bordered table-hover">
 								<thead>
@@ -80,16 +42,63 @@
 								</thead>
 								<c:forEach items="${list}" var="board">
 									<tr>
-									 <td>${board.bno}</td>
-									 <td>${board.title}</td>
-									 <td>${board.writer}</td>
+									 <td><c:out value="${board.bno}"></c:out></td>
+									 <td><a class="move" href="<c:out value="${board.bno}"/>">
+									 <!-- 링크로 넘길 파라미터가 많아지면 링크가 복잡 -->
+									 <c:out value="${board.title}"></c:out></a></td>
+									 <td><c:out value="${board.writer}"></c:out></td>
 									 <td><fmt:formatDate pattern="yyyy-MM-dd" value="${board.regdate}"/></td>
 									 <td><fmt:formatDate pattern="yyyy-MM-dd" value="${board.updatedate}"/></td>
+									 <!-- cout 을 쓰면 자동으로escape처리되기 때문에 특수문자 오류나 xss에 대응가능 -->
 									</tr>
-								
 								</c:forEach>
 							</table>
 							<!-- /.table-responsive -->
+							<form id="actionForm" action="/board/list" method="get">
+								<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}"/>
+								<input type="hidden" name="amount" value="${pageMaker.cri.amount}"/>
+								<input type="hidden" name="bno" value=""/>
+							</form>
+							
+							<div class="pull-right">
+								<ul class = "pagination">
+									<c:if test="${pageMaker.prev}">
+										<li class="paginate_button previous"><a href="${pageMaker.startPage - 10}">prev</a></li>
+									</c:if>
+									<c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
+										<c:choose>
+											<c:when test="${pageMaker.cri.pageNum == num}">
+												<li style="pointer-events : none;" class="paginate_button active"><a href="${num}">${num}</a></li>
+											</c:when>
+											<c:otherwise>
+												<li class="paginate_button"><a href="${num}">${num}</a></li>
+											</c:otherwise>
+										</c:choose>
+									</c:forEach>
+									<c:if test="${pageMaker.next}">
+										<li class="paginate_button next"><a href="${pageMaker.startPage + 10}">next</a></li>
+									</c:if>
+								</ul>
+							</div>
+							
+							<script type="text/javascript">
+							var actionForm = $("#actionForm");	
+							$(".paginate_button a").on("click",function(e) {
+								console.log("click");
+								e.preventDefault();
+								actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+								actionForm.submit();
+							});
+							
+							$(".move").on("click",function(e) {
+								console.log("click");
+								e.preventDefault();
+								actionForm.find("input[name='bno']").val($(this).attr("href"));
+								actionForm.attr("action","/board/get");
+								actionForm.submit();
+							});
+							
+							</script>
 						</div>
 						<!-- /.panel-body -->
 					</div>
@@ -98,9 +107,58 @@
 				<!-- /.col-lg-12 -->
 			</div>
 		</div>
-		<!-- /#page-wrapper --
+		<!-- /#page-wrapper -->
 	</div>
 	<!-- /#wrapper -->
+	
+	
+	 <!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1"  role="dialog"  aria-labelledby="myModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                <!-- times : 'x' -->
+	                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+	            </div>
+	            <div class="modal-body">
+	                
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-default" data-dismiss="modal">확인</button>
+	            </div>
+	        </div>
+	        <!-- /.modal-content -->
+	    </div>
+	    <!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var result ="<c:out value="${result}"/>";
+			
+			checkModal(result);
+			
+			history.replaceState({},null,null)//param : stateobj,title,url
+			//글 등록 수정 후 뒤로가기 했을 때 모달 창 뜨는거 방지용
+			
+			function checkModal(result){
+				if(result === '' || history.state) {
+					//parseInt가 NaN일 때 true
+					return;
+				}
+				if(parseInt(result) > 0) {
+					$(".modal-body").html("게시글" + result + "번이 등록 되었습니다");
+					$("#myModal").modal("show");
+				} else if(result === "success") {
+					$(".modal-body").html("처리 완료");
+					$("#myModal").modal("show");
+				}
+			}
+			
+		})
+	</script>
+	
 	<%@ include file="../includes/footer.jsp" %>
 </body>
 

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.zerock.domain.BoardVO;
+import org.zerock.domain.Criteria;
 import org.zerock.mapper.BoardMapper;
 
 import lombok.Setter;
@@ -36,6 +37,12 @@ public class BoardMapperTest {
 		boardMapper.insertSelectKey(vo);
 		log.info(vo);
 		//vo에 bno값이 저장되서 돌아온다
+	}
+	
+	@Test
+	public void totalTest() {
+		int total = boardMapper.getTotalCount(new Criteria());
+		log.info(total);
 	}
 
 }

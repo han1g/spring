@@ -11,6 +11,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.zerock.domain.BoardVO;
+import org.zerock.domain.Criteria;
+import org.zerock.domain.PageDTO;
 import org.zerock.service.BoardService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,17 +41,18 @@ public class BoardController {
 	private BoardService service;
 	
 	@GetMapping("/list")
-	public ModelAndView list(ModelAndView model) {
+	public ModelAndView list(Criteria cri, ModelAndView model) {
 		log.info("list");
-		model.addObject("list",service.getList());
+		model.addObject("list",service.getList(cri));
+		model.addObject("pageMaker",new PageDTO(cri, service.getTotal(cri)));
 		model.getModel().forEach((key,value) ->{
-			log.info("key:" + key + "  value:" + value);
+			log.debug("key:" + key + "  value:" + value);
 		});
 		return model;
 	}
 	
 	@GetMapping("/forward")
-	public void forward(ModelAndView model) throws JsonProcessingException {
+	public ModelAndView forward(ModelAndView model) throws JsonProcessingException {
 	//왜인지 모델로 하면 리스트가 안넘어옴
 		
 		
@@ -58,12 +61,15 @@ public class BoardController {
 		});
 		log.info("forward");
 		
+		return model;
+		
 	}
 	
 	@GetMapping("/get")
-	public void get(@RequestParam("bno") Long bno, ModelAndView model) {
+	public ModelAndView get(@RequestParam("bno") Long bno,@ModelAttribute("cri") Criteria cri , ModelAndView model) {
 		log.info("get");
 		model.addObject("board",service.get(bno));
+		return model;
 		
 	}
 	
@@ -78,6 +84,10 @@ public class BoardController {
 		
 	}
 	
+	@GetMapping("/register")
+	public void register() {
+		
+	}
 
 	
 	
@@ -94,13 +104,22 @@ public class BoardController {
 	
 	@PostMapping("/modify")
 	public String modify(BoardVO board, RedirectAttributes rttr) {
-		log.info("register : " + board);
+		//request body 뿐만아니라 url 파라미터도 같이 받음
+		log.info("modifyPost : " + board);
 		if(service.modify(board)) {
 			rttr.addFlashAttribute("result", "success");
 		}
 		
 		return "redirect:/board/list";
 		
+		//(board/list)요청의 모델에 result가 추가됨
+	}
+	
+	@GetMapping("/modify")
+	public ModelAndView modify(@RequestParam("bno") Long bno, ModelAndView model) {
+		log.info("modifyGet");
+		model.addObject("board",service.get(bno));
+		return model;
 		//(board/list)요청의 모델에 result가 추가됨
 	}
 	
