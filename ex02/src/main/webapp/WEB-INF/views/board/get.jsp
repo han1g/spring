@@ -28,6 +28,7 @@
 						<div class="panel-heading">Board Detail</div>
 						<!-- /.panel-heading -->
 						<div class="panel-body">
+							<form >
 								<div class="form-group">
 									<label for="title">Title</label>
 									<input id="title" class="form-control" name="title" 
@@ -43,14 +44,18 @@
 									<input id="writer" class="form-control" name="writer"
 									value='<c:out value="${board.writer}"></c:out>' readonly="readonly"/>
 								</div>
+							</form>
+							<form id="actionForm" action="" method="get">
+								
+								<input type="hidden" name="pageNum" value="${cri.pageNum}"/>
+								<input type="hidden" name="amount" value="${cri.amount}"/>
+								<input type="hidden" name="type" value="<c:out value="${cri.type}"/>"/>
+								<input type="hidden" name="keyword" value="<c:out value="${cri.keyword}"/>"/>
 								<div class="form-group">
-									<a href="/board/modify?bno=<c:out value="${board.bno}"/>" class="btn btn-default">Modify</a>
-									<a href="/board/list" class="btn btn-default">List</a>
+									<button class="btn btn-default" data-oper="modify">Modify</button>
+									<button class="btn btn-default" data-oper="list">List</button>
 								</div>
-								<form id="actionForm" action="/board/list" method="get">
-									<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}"/>
-									<input type="hidden" name="amount" value="${pageMaker.cri.amount}"/>
-								</form>
+							</form>
 						</div>
 						<!-- /.panel-body -->
 					</div>
@@ -62,6 +67,31 @@
 		<!-- /#page-wrapper -->
 	</div>
 	<!-- /#wrapper -->
+	<script>
+		$(document).ready(function() {
+			var form = $("#actionForm");
+			
+			$('button').on("click",function(event) {
+				event.preventDefault();
+				var operation = $(this).data("oper");
+				console.log(operation);
+				switch(operation) {
+					case "modify":
+						form.append('<input type="hidden" name="bno" value="${board.bno}"/>');
+						form.attr("action","/board/modify");
+						break;
+					case "list":
+						form.attr("action","/board/list");
+						break;
+						
+					default : return;
+				
+				}
+				form.submit();
+			})
+		})
+	</script>
+	
 	<%@ include file="../includes/footer.jsp" %>
 </body>
 

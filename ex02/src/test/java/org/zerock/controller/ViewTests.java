@@ -25,7 +25,7 @@ public class ViewTests {
 	public ModelAndView list(Criteria cri, ModelAndView model) {
 		log.info("list");
 		//model.addObject("list",service.getList(cri));
-		
+		cri.setType("C");
 		model.addObject("pageMaker",new PageDTO(cri, 123));
 		model.getModel().forEach((key,value) ->{
 			log.info("key:" + key + "  value:" + value);

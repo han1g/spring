@@ -66,7 +66,7 @@ public class BoardController {
 	}
 	
 	@GetMapping("/get")
-	public ModelAndView get(@RequestParam("bno") Long bno,@ModelAttribute("cri") Criteria cri , ModelAndView model) {
+	public ModelAndView get(@RequestParam("bno") Long bno, @ModelAttribute("cri") Criteria cri, ModelAndView model) {
 		log.info("get");
 		model.addObject("board",service.get(bno));
 		return model;
@@ -74,14 +74,43 @@ public class BoardController {
 	}
 	
 	@PostMapping("/remove")
-	public String remove(@RequestParam("bno") Long bno, RedirectAttributes rttr) {
+	public String remove(@RequestParam("bno") Long bno,Criteria cri, RedirectAttributes rttr) {
 		log.info("get");
 		if(service.remove(bno)) {
 			rttr.addFlashAttribute("result", "success");
 		}
+		/*rttr.addAttribute("pageNum",cri.getPageNum());
+		rttr.addAttribute("amount",cri.getAmount());*/
+		//attribute가 늘어날 때 마다 적으면 귀찮음
 		
-		return "redirect:/board/list";
 		
+		return "redirect:/board/list" + cri.getListLink();
+		//매크로 만들어서 불러오기
+		
+	}
+	
+	@PostMapping("/modify")
+	public String modify(BoardVO board, Criteria cri, RedirectAttributes rttr) {
+		//request body 뿐만아니라 url 파라미터도 같이 받음
+		log.info("modifyPost : " + board);
+		if(service.modify(board)) {
+			rttr.addFlashAttribute("result", "success");
+		}
+		
+		/*rttr.addAttribute("pageNum",cri.getPageNum());
+		rttr.addAttribute("amount",cri.getAmount());*/
+		//redirect attribute는 객체로 못넘김
+		return "redirect:/board/list" + cri.getListLink();
+		
+		//(board/list)요청의 모델에 result가 추가됨
+	}
+	
+	@GetMapping("/modify")
+	public ModelAndView modify(@RequestParam("bno") Long bno, @ModelAttribute("cri") Criteria cri, ModelAndView model) {
+		log.info("modifyGet");
+		model.addObject("board",service.get(bno));
+		return model;
+		//(board/list)요청의 모델에 result가 추가됨
 	}
 	
 	@GetMapping("/register")
@@ -99,27 +128,6 @@ public class BoardController {
 		
 		return "redirect:/board/list";
 		
-		//(board/list)요청의 모델에 result가 추가됨
-	}
-	
-	@PostMapping("/modify")
-	public String modify(BoardVO board, RedirectAttributes rttr) {
-		//request body 뿐만아니라 url 파라미터도 같이 받음
-		log.info("modifyPost : " + board);
-		if(service.modify(board)) {
-			rttr.addFlashAttribute("result", "success");
-		}
-		
-		return "redirect:/board/list";
-		
-		//(board/list)요청의 모델에 result가 추가됨
-	}
-	
-	@GetMapping("/modify")
-	public ModelAndView modify(@RequestParam("bno") Long bno, ModelAndView model) {
-		log.info("modifyGet");
-		model.addObject("board",service.get(bno));
-		return model;
 		//(board/list)요청의 모델에 result가 추가됨
 	}
 	

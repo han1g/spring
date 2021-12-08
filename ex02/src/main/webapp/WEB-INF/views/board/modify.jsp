@@ -16,7 +16,7 @@
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Board Detail</h1>
+					<h1 class="page-header">Board Modify</h1>
 				</div>
 				<!-- /.col-lg-12 -->
 			</div>
@@ -25,7 +25,7 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="panel panel-default">
-						<div class="panel-heading">Board Detail</div>
+						<div class="panel-heading">Board Modify</div>
 						<!-- /.panel-heading -->
 						<div class="panel-body">
 							<form id="modify-main" role="form" action="" method="post">
@@ -45,10 +45,14 @@
 									<input id="writer" class="form-control" name="writer"
 									value='<c:out value="${board.writer}"></c:out>'/>
 								</div>
+								<input type="hidden" name="pageNum" value="${cri.pageNum}"/>
+								<input type="hidden" name="amount" value="${cri.amount}"/>
+								<input type="hidden" name="type" value="<c:out value="${cri.type}"/>"/>
+								<input type="hidden" name="keyword" value="<c:out value="${cri.keyword}"/>"/>
 								<div class="form-group">
 									<button class="btn btn-default" data-oper="modify">Modify</button>
 									<button class="btn btn-default" data-oper="remove">Remove</button>
-									<a href="/board/list" class="btn btn-default">List</a>
+									<button class="btn btn-default" data-oper="list">List</button>
 								</div>
 							</form>
 						</div>
@@ -77,8 +81,20 @@
 					case "remove":
 						form.attr("action","/board/remove");
 						break;
+					case "list":
+						var pageNum = form.append($("input[name='pageNum']").clone());
+						var amount = form.append($("input[name='amount']").clone());
+						var type = form.append($("input[name='type']").clone());
+						var keyword = form.append($("input[name='keyword']").clone());
+						form.empty();
+						form.append(pageNum);
+						form.append(amount);
+						form.append(type);
+						form.append(keyword);
+						form.attr("action","/board/list");
+						form.attr("method","get");
+						break;
 					default : return;
-				
 				}
 				form.submit();
 			})

@@ -39,13 +39,18 @@ public class BoardServiceTest {
 	}
 	@Test
 	public void testList() {
-		
-		boardService.getList(new Criteria(3,10));
+		Criteria criteria = new Criteria(1,1000);
+		//criteria.setType("T");
+		//criteria.setKeyword("a");
+		boardService.getList(criteria);
 	}
 	
 	@Test
 	public void totalTest() {
-		int total = boardService.getTotal(new Criteria());
+		Criteria criteria = new Criteria(1,1000);
+		criteria.setType("T");
+		criteria.setKeyword("a");
+		int total = boardService.getTotal(criteria);
 		log.info(total);
 	}
 	

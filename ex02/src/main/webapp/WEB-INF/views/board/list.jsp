@@ -54,11 +54,36 @@
 								</c:forEach>
 							</table>
 							<!-- /.table-responsive -->
-							<form id="actionForm" action="/board/list" method="get">
-								<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}"/>
+							
+							<form id="searchForm" action="/board/list" method="get">
+								<input type="hidden" name="pageNum" value="1"/>
 								<input type="hidden" name="amount" value="${pageMaker.cri.amount}"/>
-								<input type="hidden" name="bno" value=""/>
+								<select name="type">
+									<option value="T" 
+									<c:out value="${pageMaker.cri.type == 'T' ? 'selected' : ''}"></c:out>>제목</option>
+									<option value="C" 
+									<c:out value="${pageMaker.cri.type == 'C' ? 'selected' : ''}"></c:out>>내용</option>
+									<option value="W" 
+									<c:out value="${pageMaker.cri.type == 'W' ? 'selected' : ''}"></c:out>>작성자</option>
+									<option value="TC" 
+									<c:out value="${pageMaker.cri.type == 'TC' ? 'selected' : ''}"></c:out>>제목 + 내용</option>
+									<option value="TW" 
+									<c:out value="${pageMaker.cri.type == 'TW' ? 'selected' : ''}"/> >제목 + 작성자</option>
+									<option value="TWC" 
+									<c:out value="${pageMaker.cri.type == 'TWC' ? 'selected' : ''}"></c:out>>제목 + 내용 + 작성자</option>
+								</select>
+								<input type="text" name="keyword" value="${pageMaker.cri.keyword}">
+								<button class="btn btn-default">Search</button>
 							</form>
+							<script type="text/javascript">
+							//script for search
+							$("#searchForm button").on("click",function(e) {
+								console.log("search");
+								e.preventDefault();
+
+								$("#searchForm").submit();
+							});
+							</script>
 							
 							<div class="pull-right">
 								<ul class = "pagination">
@@ -81,7 +106,14 @@
 								</ul>
 							</div>
 							
+							<form id="actionForm" action="/board/list" method="get">
+								<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}"/>
+								<input type="hidden" name="amount" value="${pageMaker.cri.amount}"/>
+								<input type="hidden" name="type" value="<c:out value="${pageMaker.cri.type}"/>"/>
+								<input type="hidden" name="keyword" value="<c:out value="${pageMaker.cri.keyword}"/>"/>
+							</form>
 							<script type="text/javascript">
+							//script for paging
 							var actionForm = $("#actionForm");	
 							$(".paginate_button a").on("click",function(e) {
 								console.log("click");
@@ -93,8 +125,16 @@
 							$(".move").on("click",function(e) {
 								console.log("click");
 								e.preventDefault();
+								actionForm.append('<input type="hidden" name="bno" value=""/>');
 								actionForm.find("input[name='bno']").val($(this).attr("href"));
 								actionForm.attr("action","/board/get");
+								actionForm.submit();
+							});
+							
+							$(".paginate_button a").on("click",function(e) {
+								console.log("click");
+								e.preventDefault();
+								actionForm.find("input[name='pageNum']").val($(this).attr("href"));
 								actionForm.submit();
 							});
 							
