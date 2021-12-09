@@ -8,6 +8,7 @@
 <head>
 <title>SB Admin 2 - Bootstrap Admin Theme</title>
 	<%@ include file="../includes/import.jsp" %>
+	<script type="text/javascript" src="/resources/js/reply.js"></script>
 </head>
 
 <body>
@@ -63,10 +64,104 @@
 				</div>
 				<!-- /.col-lg-12 -->
 			</div>
+			<!-- /.row -->
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><i class="fa fa-comments fa-fw"></i>Reply
+						<button id="addReplyBtn" class="btn btn-xs pull-right">New reply</button>
+						<script>
+							$(document).ready(function (){
+								var bnoValue = '<c:out value="${board.bno}"/>';
+								var replyUL
+								
+							})
+						</script>
+						</div>
+						<!-- /.panel-heading -->
+						<div class="panel-body">
+							<ul id="replyUL" class="chat">
+								<li class="left clearfix" data-rno='12'>
+									<div class="header">
+										<strong class="primary-font">replyer</strong>
+									</div>
+									<p>reply</p>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 		<!-- /#page-wrapper -->
 	</div>
 	<!-- /#wrapper -->
+	 <!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1"  role="dialog"  aria-labelledby="myModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                <!-- times : 'x' -->
+	                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+	            </div>
+	            <div class="modal-body">
+	                <div
+	            </div>
+	            <div class="modal-footer">
+	            	<button type="button" class="btn btn-default" data-dismiss="modal">modify</button>
+	            	<button type="button" class="btn btn-default" data-dismiss="modal">remove</button>
+	                <button type="button" class="btn btn-default" data-dismiss="modal">register</button>
+	           		<button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+	            </div>
+	        </div>
+	        <!-- /.modal-content -->
+	    </div>
+	    <!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
+	
+	
+	
+	<script>
+		$(document).ready(function() {
+			var bnoValue = '<c:out value="${board.bno}"/>'
+			var replyUL = $('#replyUL');
+			showList(1);
+			
+			function showList(page) {
+				replyService.getList({bno:bnoValue ,page : page || 1},function(list) { 
+					var str="";
+					if(list == null || list.length == 0) {
+						replyUL.html("");
+						return;
+					}
+					for(var i = 0 , len = list.length; i < len;i++) {
+						str += `<li class="left clearfix" data-rno='${'${list[i].rno}'}'>
+									<div class="header">
+										<strong class="primary-font">${'${list[i].replyer}'}</strong>
+										<small class="pull-right text-muted">${'${replyService.displayTime(list[i].replydate)}'}</small>
+									</div>
+									<p>${'${list[i].reply}'}</p>
+								</li>`;
+					}
+					replyUL.html(str);
+				});
+			}
+		});
+	</script>
+	<script>
+		console.log("ajax test");
+		var bnoValue = '<c:out value="${board.bno}"/>';
+		/*replyService.add({reply:"JS Test",replyer : "tester", bno:bnoValue}//data,
+				function(result) {alert(result);}//callback 
+				);*/
+				
+		/*replyService.getList({bno:bnoValue,page : 1},function(result) { alert(JSON.stringify(result));});*/
+		/*replyService.remove(5,function(result) { alert(result);},function(err) {alert(err);});*/
+		/*replyService.update({rno : 12, reply:"JS Test modfiy",replyer : "tester", bno:bnoValue});*/
+		
+	</script>
 	<script>
 		$(document).ready(function() {
 			var form = $("#actionForm");
@@ -89,6 +184,8 @@
 				}
 				form.submit();
 			})
+			
+			
 		})
 	</script>
 	
