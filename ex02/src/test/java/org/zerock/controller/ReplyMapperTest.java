@@ -30,10 +30,10 @@ public class ReplyMapperTest {
 	
 	@Test
 	public void inesrtTest() {
-		IntStream.rangeClosed(1, 10).forEach(i -> {
+		IntStream.rangeClosed(1, 100).forEach(i -> {
 			ReplyVO vo = new ReplyVO();
 			
-			vo.setBno(bnoArr [i % 5]);
+			vo.setBno(33L);
 			vo.setReply("´ñ±Û" + i);
 			vo.setReplyer("replyer" + i);
 			
