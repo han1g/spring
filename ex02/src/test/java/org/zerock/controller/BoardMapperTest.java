@@ -28,6 +28,24 @@ public class BoardMapperTest {
 	}
 	
 	@Test
+	public void updateReplyTest() {
+		boardMapper.updateReplyCnt( 32L, 1);
+		log.info("sss");
+	}
+	@Test
+	public void updateTest() {
+		BoardVO vo = new BoardVO();
+		vo.setWriter("作成者");
+		vo.setContent("内容");
+		vo.setTitle("題名");
+		vo.setBno(32L);
+		log.info(vo);
+		boardMapper.update(vo);
+		log.info(vo);
+		//vo에 bno값이 저장되서 돌아온다
+	}
+	
+	@Test
 	public void insertTest() {
 		BoardVO vo = new BoardVO();
 		vo.setWriter("作成者");
@@ -44,5 +62,7 @@ public class BoardMapperTest {
 		int total = boardMapper.getTotalCount(new Criteria());
 		log.info(total);
 	}
+	
+
 
 }

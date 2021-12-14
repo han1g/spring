@@ -242,6 +242,7 @@
 			});
 			
 			modalRegisterBtn.on("click",function(e){
+				console.log("register");
 				var reply = {reply : modalInputReply.val(),
 							replyer : modalInputReplyer.val(),
 							bno : bnoValue};

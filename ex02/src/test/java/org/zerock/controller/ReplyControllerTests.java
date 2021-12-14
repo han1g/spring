@@ -12,14 +12,22 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.WebApplicationContext;
+import org.zerock.domain.ReplyVO;
+
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -45,5 +53,18 @@ public class ReplyControllerTests {
 		log.info(mockMvc.perform(get("/replies/pages/33/1")).andReturn().getResponse().getContentAsString());
 	}
 	
+	@Test
+	public void insertTest() throws Exception {
+		ReplyVO reply = new ReplyVO();
+		reply.setBno(33L);
+		reply.setReply("reply");
+		reply.setReplyer("replyer");
+		String jsonStr = new Gson().toJson(reply);
+		log.info(jsonStr);
+		log.info(mockMvc.perform(post("/replies/new").contentType(MediaType.APPLICATION_JSON_UTF8)
+				.content(jsonStr)).andReturn().getResponse().getContentAsString());
+	}
+	
+
 	
 }
