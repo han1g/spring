@@ -8,10 +8,15 @@
 <head>
 <title>SB Admin 2 - Bootstrap Admin Theme</title>
 	<%@ include file="../includes/import.jsp" %>
+	<link rel="stylesheet" type="text/css" href="/resources/css/attachment.css">
 </head>
 
 <body>
 	<div id="wrapper">
+	<div class="bigPictureWrapper">
+			<div class="bigPicture">
+			</div>
+	</div>
 	<%@ include file="../includes/nav.jsp" %>
 		<div id="page-wrapper">
 			<div class="row">
@@ -42,7 +47,7 @@
 									<input id="writer" class="form-control" name="writer"/>
 								</div>
 								<div class="form-group">
-									<button type="submit" class="btn btn-default">Submit</button>
+									<button id="registerBtn" type="submit" class="btn btn-default">Submit</button>
 									<button type="reset" class="btn btn-default">Reset</button>
 								</div>
 							</form>
@@ -53,10 +58,34 @@
 				</div>
 				<!-- /.col-lg-12 -->
 			</div>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">File Attach</div>
+						<!-- /.panel-heading -->
+						<div class="panel-body">
+							<div class="form-group uploadDiv">
+								<input id="file-input" type="file" name="uploadFile" multiple="multiple">
+							</div>
+							<div class="uploadResult">
+								<ul>
+								
+								</ul>
+							</div>
+						</div>
+						<!-- /.panel-body -->
+					</div>
+					<!-- /.panel -->
+				</div>
+				<!-- /.col-lg-12 -->
+			</div>
+			<!-- /.row -->		
 		</div>
 		<!-- /#page-wrapper -->
 	</div>
 	<!-- /#wrapper -->
+	<script type="text/javascript" src="/resources/js/attachmentModule.js">
+	</script>
 	<%@ include file="../includes/footer.jsp" %>
 </body>
 

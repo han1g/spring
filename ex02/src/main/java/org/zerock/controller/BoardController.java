@@ -125,6 +125,7 @@ public class BoardController {
 		log.info("register : " + board);
 		service.register(board);
 		rttr.addFlashAttribute("result", board.getBno());
+		board.getAttachList().forEach(log::info);
 		
 		return "redirect:/board/list";
 		

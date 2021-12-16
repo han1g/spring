@@ -8,11 +8,16 @@
 <head>
 <title>SB Admin 2 - Bootstrap Admin Theme</title>
 	<%@ include file="../includes/import.jsp" %>
-	<script type="text/javascript" src="/resources/js/reply.js"></script>
+	<script type="text/javascript" src="/resources/js/replyModule.js"></script>
+	<link rel="stylesheet" type="text/css" href="/resources/css/attachment.css">
 </head>
 
 <body>
 	<div id="wrapper">
+	<div class="bigPictureWrapper">
+			<div class="bigPicture">
+			</div>
+	</div>
 	<%@ include file="../includes/nav.jsp" %>
 		<div id="page-wrapper">
 			<div class="row">
@@ -68,6 +73,23 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="panel panel-default">
+						<div class="panel-heading">Files</div>
+						<div class="panel-body">
+							<div class="uploadResult">
+								<ul>
+								</ul>
+							</div>
+						</div>
+						<!-- /.panel-body -->
+					</div>
+					<!-- /.panel -->
+				</div>
+				<!-- /.col-lg-12 -->
+			</div>
+			<!-- /.row -->
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="panel panel-default">
 						<div class="panel-heading"><i class="fa fa-comments fa-fw"></i>Reply
 						<button id="addReplyBtn" class="btn btn-xs pull-right">New reply</button>
 						</div>
@@ -95,6 +117,7 @@
 				<!-- /.col-lg-12 -->
 			</div>
 			<!-- /.row -->
+				
 		</div>
 		<!-- /#page-wrapper -->
 	</div>
@@ -135,186 +158,14 @@
 	</div>
 	<!-- /.modal -->
 	
-	
-	
+	<!-- reply logics -->
+	<script type="text/javascript" src="/resources/js/replyModule.js"></script>
+	<script type="text/javascript" src="/resources/js/reply.js"></script>
 	<script>
-		$(document).ready(function() {
-			//리스트, 페이징 처리
-			var bnoValue = '<c:out value="${board.bno}"/>'
-			var replyUL = $('#replyUL');
-			
-			var pageNum = 1;
-			var replyPageFooter = $("#replyPageFooter");
-			showList(1);
-			
-			function showReplyPage(replyCnt) {
-				console.log(replyCnt);
-				var endNum = Math.ceil(pageNum / 10)*10;
-				var startNum = endNum - 9;
-				
-				var realEnd = Math.ceil(replyCnt/10);
-				if(endNum >= realEnd) {
-					endNum = realEnd;
-				}
-				console.log(startNum);
-				console.log(endNum);
-				
-				var prev = startNum != 1;
-				var next = endNum < realEnd;
-				
-				
-				replyPageFooter.html("");
-				var str = "";
-				str += `<ul class="pagination pull-right">`
-				if(prev)
-					str += `<li class ="page-item"><a class='page-link' href="${'${startNum - 1}'}">Previous</a></li>`;
-				for(var i = startNum ; i <=endNum ; i++) {
-					var active = pageNum == i ? "active" : "";
-					str += `<li class ="page-item  ${'${active}'}"><a class='page-link' href="${'${i}'}" >${'${i}'}</a></li>`;
-					}
-				if(next)
-					str += `<li class ="page-item"><a class='page-link' href="${'${endNum + 1}'}">Next</a></li>`;
-				str += `</ul>`;
-							
-				replyPageFooter.html(str);
-				
-				
-			}
-			
-			function showList(page) {
-				replyService.getList({bno:bnoValue ,page : page || 1},function(replyCnt,list) { 
-					var str="";
-					console.log(replyCnt);
-					console.log(list);
-					if(page == -1) { // 댓글 등록 후 -1이 들어옴
-						pageNum = Math.ceil(replyCnt/10);
-						showList(pageNum);
-						return;
-					}
-					
-					if(list == null || list.length == 0) {
-						replyUL.html("");
-						return;
-					}
-					for(var i = 0 , len = list.length; i < len;i++) {
-						str += `<li class="left clearfix" data-rno='${'${list[i].rno}'}'>
-									<div class="header">
-										<strong class="primary-font">${'${list[i].replyer}'}</strong>
-										<small class="pull-right text-muted">${'${replyService.displayTime(list[i].replydate)}'}</small>
-									</div>
-									<p>${'${list[i].reply}'}</p>
-								</li>`;
-					}
-					replyUL.html(str);
-					showReplyPage(replyCnt);
-				});
-				
-			}
-
-			replyPageFooter.on("click","li a",function(e) {
-				console.log("click");
-				e.preventDefault();
-				pageNum = $(this).attr("href");
-				showList(pageNum);
-			});
-			
-			
-			//모달 처리
-			var modal = $(".modal");
-			var modalInputReply = modal.find("input[name='reply']");
-			var modalInputReplyer = modal.find("input[name='replyer']");
-			var modalInputReplyDate = modal.find("input[name='replydate']");
-			
-			var modalModBtn = $("#modalModBtn");
-			var modalRemoveBtn = $("#modalRemoveBtn");
-			var modalRegisterBtn = $("#modalRegisterBtn");
-			
-			$("#addReplyBtn").on("click",function(e) {
-				modal.find("input").val("");
-				modal.find("input").closest("div").hide();
-				
-				modalInputReply.closest("div").show();
-				modalInputReplyer.closest("div").show();
-				
-				modal.find("button[id !='modalCloseBtn']").hide();
-				modalRegisterBtn.show();
-				$(".modal").modal("show");
-			});
-			
-			modalRegisterBtn.on("click",function(e){
-				console.log("register");
-				var reply = {reply : modalInputReply.val(),
-							replyer : modalInputReplyer.val(),
-							bno : bnoValue};
-				replyService.add(reply, function(result) {
-					alert(result);
-					
-					modal.find("input").val("");
-					modal.modal("hide");
-					showList(-1);
-				});
-			});
-			modalModBtn.on("click",function(e){
-				var reply = {reply : modalInputReply.val(),rno : modal.data("rno")};
-				replyService.update(reply, function(result) {
-					alert(result);
-					
-					modal.find("input").val("");
-					modal.modal("hide");
-					showList(pageNum);
-				});
-			});
-			
-			modalRemoveBtn.on("click",function(e){
-				replyService.remove(modal.data("rno"), function(result) {
-					alert(result);
-					
-					modal.find("input").val("");
-					modal.modal("hide");
-					showList(pageNum);
-				});
-			});
-			
-			$(".chat").on("click","li",function(e) {
-				var rno = $(this).data("rno");
-				console.log(rno);
-				replyService.get(rno,function(result) {
-					modal.find("input").val("");
-					
-					modal.find("input").closest("div").hide();
-					
-					
-					modalInputReply.val(result.reply);
-					modalInputReplyer.val(result.replyer);
-					modalInputReplyDate.val(replyService.displayTime(result.replydate)).attr("readonly","readonly");
-					modal.data("rno",result.rno);
-					
-					modalInputReply.closest("div").show();
-					modalInputReplyer.closest("div").show();
-					modalInputReplyDate.closest("div").show();
-					
-					modal.find("button[id != 'modalCloseBtn']").hide();
-					modalModBtn.show();
-					modalRemoveBtn.show();
-					
-					$(".modal").modal("show");	
-				});
-			});
-			
-		});
-	</script>
-	<script>
-		console.log("ajax test");
 		var bnoValue = '<c:out value="${board.bno}"/>';
-		/*replyService.add({reply:"JS Test",replyer : "tester", bno:bnoValue}//data,
-				function(result) {alert(result);}//callback 
-				);*/
-				
-		/*replyService.getList({bno:bnoValue,page : 1},function(result) { alert(JSON.stringify(result));});*/
-		/*replyService.remove(5,function(result) { alert(result);},function(err) {alert(err);});*/
-		/*replyService.update({rno : 12, reply:"JS Test modfiy",replyer : "tester", bno:bnoValue});*/
-		
+		loadReply(bnoValue,replyService);
 	</script>
+	<!-- reply logics end-->
 	<script>
 		$(document).ready(function() {
 			var form = $("#actionForm");
@@ -340,6 +191,18 @@
 			
 			
 		})
+	</script>
+	<script>
+		/*console.log("ajax test");
+		
+		replyService.add({reply:"JS Test",replyer : "tester", bno:bnoValue}//data,
+				function(result) {alert(result);}//callback 
+				);*/
+				
+		/*replyService.getList({bno:bnoValue,page : 1},function(result) { alert(JSON.stringify(result));});*/
+		/*replyService.remove(5,function(result) { alert(result);},function(err) {alert(err);});*/
+		/*replyService.update({rno : 12, reply:"JS Test modfiy",replyer : "tester", bno:bnoValue});*/
+		
 	</script>
 	
 	<%@ include file="../includes/footer.jsp" %>

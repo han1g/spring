@@ -112,7 +112,7 @@
 				var targetFile = $(this).data("file");
 				var type = $(this).data("type");
 				console.log(targetFile);
-				var el = $(this).parent();
+				var el = $(this).closest("li");
 				$.ajax({
 					url: '/deleteFile',
 					data: {fileName: targetFile, type:type},

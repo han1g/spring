@@ -32,7 +32,7 @@ function collapse() {
 // Sets the min-height of #page-wrapper to window size
 $(function() {
 	//console.log('d');
-	collapse();
+	collapse();//창 로드시 bind함수가 실행되지 않는 경우가 있음
     $(window).bind("load resize", collapse);
 
     var url = window.location;

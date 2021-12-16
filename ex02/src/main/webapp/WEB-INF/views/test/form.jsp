@@ -7,10 +7,16 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<form action="/test/postPage" method="post" >
-		<input name="a" value="">
-		<input name="b" value="">
-		<input type="submit" value="post">
-	</form>
+	<script>
+	 function func(a,b) {
+		 console.log("ab");
+	 }
+	 function func(a) {
+		 console.log("a");
+	 }
+	 func(1);
+	 func(1,2);
+	 //오버라이딩 따위 없음
+	</script>
 </body>
 </html>
