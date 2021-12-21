@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.zerock.domain.AttachFileDTO;
+import org.zerock.domain.BoardAttachVO;
 
 import com.google.gson.Gson;
 
@@ -65,7 +65,7 @@ public class UploadController {
 	}
 	
 	@PostMapping(value = {"/uploadFormAction","/relative/uploadFormAction"}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseEntity<List<AttachFileDTO>> uploadFormPost(MultipartFile[] uploadFile) throws IOException {
+	public @ResponseBody ResponseEntity<List<BoardAttachVO>> uploadFormPost(MultipartFile[] uploadFile) throws IOException {
 		String datePath = getFolder();
 		File uploadPath = new File("C:\\upload\\temp",datePath);
 		if(!uploadPath.exists()) {//여기는 root가 C
@@ -73,7 +73,7 @@ public class UploadController {
 		}
 		
 		
-		ArrayList<AttachFileDTO> retList = new ArrayList<>(); 
+		ArrayList<BoardAttachVO> retList = new ArrayList<>(); 
 		for(MultipartFile multipartFile : uploadFile) {
 			String fileName = multipartFile.getOriginalFilename();
 			log.info(multipartFile.getName());//<파라미터명>
@@ -105,9 +105,9 @@ public class UploadController {
 			}catch (Exception e) {
 				log.error(e.getMessage());
 			}
-			AttachFileDTO ret = new AttachFileDTO();
+			BoardAttachVO ret = new BoardAttachVO();
 			ret.setFileName(multipartFile.getOriginalFilename().substring(fileName.lastIndexOf("\\") + 1));
-			ret.setImage(isImage);
+			ret.setFileType(isImage);
 			ret.setUploadPath(datePath);
 			ret.setUuid(uuid.toString());
 			retList.add(ret);
@@ -151,7 +151,7 @@ public class UploadController {
 	
 	@PostMapping("deleteFile")
 	@ResponseBody
-	public ResponseEntity<String> deleteFile(String fileName,String type) {
+	public ResponseEntity<String> deleteFile(String fileName,boolean type) {
 		
 		File file;
 		log.info(fileName);
@@ -159,8 +159,7 @@ public class UploadController {
 			file = new File("C:\\upload\\temp\\" + fileName);
 			
 			file.delete();
-			if(type.equals("image")) {
-				
+			if(type) {
 				String thumbnailPath = file.getAbsolutePath();
 				StringBuffer thumbnailPathBuffer = new StringBuffer(thumbnailPath);
 				

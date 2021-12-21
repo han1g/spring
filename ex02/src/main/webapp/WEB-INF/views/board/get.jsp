@@ -166,6 +166,16 @@
 		loadReply(bnoValue,replyService);
 	</script>
 	<!-- reply logics end-->
+	<!-- attachment logics -->
+	<script type="text/javascript" src="/resources/js/attachmentModule.js"></script>
+	<script>
+		var showImage = attachmentService.showImage;
+		$(document).ready(function() {
+			attachmentService.setCloseImageListener($(".bigPictureWrapper"),$(".bigPicture"));
+			attachmentService.getAttachment(bnoValue,false);
+			
+		});
+	</script>
 	<script>
 		$(document).ready(function() {
 			var form = $("#actionForm");

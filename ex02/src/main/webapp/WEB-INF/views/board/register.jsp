@@ -68,9 +68,7 @@
 								<input id="file-input" type="file" name="uploadFile" multiple="multiple">
 							</div>
 							<div class="uploadResult">
-								<ul>
-								
-								</ul>
+								<ul></ul>
 							</div>
 						</div>
 						<!-- /.panel-body -->
@@ -84,7 +82,21 @@
 		<!-- /#page-wrapper -->
 	</div>
 	<!-- /#wrapper -->
-	<script type="text/javascript" src="/resources/js/attachmentModule.js">
+	<script type="text/javascript" src="/resources/js/attachmentModule.js"></script>
+	<script>
+	$(document).ready(function () {
+		/**
+		 * 게시글 등록버튼 클릭 리스너 등록
+		 */
+		var formObj = $("form[role='form']");
+		$("#registerBtn").on("click", function(e) {
+			e.preventDefault();
+			console.log("register");
+			var str = "";
+			attachmentService.addAttachmentDataToForm(formObj);
+			formObj.submit();
+		});
+	});
 	</script>
 	<%@ include file="../includes/footer.jsp" %>
 </body>

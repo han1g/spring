@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
+import org.zerock.domain.BoardAttachVO;
 import org.zerock.domain.BoardVO;
 import org.zerock.domain.Criteria;
 import org.zerock.domain.PageDTO;
@@ -28,6 +30,9 @@ import java.util.function.BiConsumer;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -76,7 +81,16 @@ public class BoardController {
 	@PostMapping("/remove")
 	public String remove(@RequestParam("bno") Long bno,Criteria cri, RedirectAttributes rttr) {
 		log.info("get");
-		if(service.remove(bno)) {
+		
+		List<BoardAttachVO> tmp = service.getAttachList(bno);//saveList before delete
+		
+		if(service.remove(bno)) {//delete from db
+			
+			tmp.forEach( el -> {
+				log.info(el.getFileName());
+				log.info(el.getUploadPath());
+				new UploadController().deleteFile(el.getUploadPath() + "\\" + el.getUuid() + "_" + el.getFileName(),el.isFileType());
+			});//delete real file
 			rttr.addFlashAttribute("result", "success");
 		}
 		/*rttr.addAttribute("pageNum",cri.getPageNum());
@@ -125,11 +139,20 @@ public class BoardController {
 		log.info("register : " + board);
 		service.register(board);
 		rttr.addFlashAttribute("result", board.getBno());
-		board.getAttachList().forEach(log::info);
+		
+		if(board.getAttachList() != null) {
+			board.getAttachList().forEach(log::info);
+		}
 		
 		return "redirect:/board/list";
 		
 		//(board/list)¿äÃ»ÀÇ ¸ðµ¨¿¡ result°¡ Ãß°¡µÊ
+	}
+	
+	@GetMapping(value ="/getAttachList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody ResponseEntity<List<BoardAttachVO>> getAttachList(Long bno){
+		
+		return new ResponseEntity<>(service.getAttachList(bno),HttpStatus.OK);
 	}
 	
 }

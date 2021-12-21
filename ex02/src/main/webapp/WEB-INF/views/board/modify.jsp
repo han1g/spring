@@ -8,6 +8,7 @@
 <head>
 <title>SB Admin 2 - Bootstrap Admin Theme</title>
 	<%@ include file="../includes/import.jsp" %>
+	<link rel="stylesheet" type="text/css" href="/resources/css/attachment.css">
 </head>
 
 <body>
@@ -62,10 +63,41 @@
 				</div>
 				<!-- /.col-lg-12 -->
 			</div>
+			<!-- /.row -->
+			
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">Files</div>
+						<div class="panel-body">
+							<div class="form-group uploadDiv">
+								<input id="file-input" type="file" name="uploadFile" multiple="multiple">
+							</div>
+							<div class="uploadResult">
+								<ul>
+								</ul>
+							</div>
+						</div>
+						<!-- /.panel-body -->
+					</div>
+					<!-- /.panel -->
+				</div>
+				<!-- /.col-lg-12 -->
+			</div>
+			<!-- /.row -->
 		</div>
 		<!-- /#page-wrapper -->
 	</div>
 	<!-- /#wrapper -->
+	<!-- attachment logics -->
+	<script type="text/javascript" src="/resources/js/attachmentModule.js"></script>
+	<script>
+		var bnoValue = bnoValue = '<c:out value="${board.bno}"/>';
+		$(document).ready(function() {
+			attachmentService.getAttachment(bnoValue,true);
+			
+		});
+	</script>
 	<script>
 		$(document).ready(function() {
 			var form = $("#modify-main");
@@ -77,6 +109,7 @@
 				switch(operation) {
 					case "modify":
 						form.attr("action","/board/modify");
+						attachmentService.addAttachmentDataToForm(form);
 						break;
 					case "remove":
 						form.attr("action","/board/remove");
