@@ -21,7 +21,8 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 			Authentication auth) throws IOException, ServletException {
 		// TODO Auto-generated method stub
 		log.warn("Login Success");
-		
+		//springSecurity의 인증 통과함
+		log.info(request.getParameter("remember-me"));
 		List<String> roleNames = new ArrayList<>();
 		
 		auth.getAuthorities().forEach(el -> {roleNames.add(el.getAuthority());});

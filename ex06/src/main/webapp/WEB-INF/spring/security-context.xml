@@ -8,15 +8,19 @@
 <bean id="customLogoutSuccess" class="org.zerock.sercurity.CustomLogoutSuccessHandler"></bean>		
 <bean id="customLoginSuccess" class="org.zerock.sercurity.CustomLoginSuccessHandler"></bean>
 <bean id="customAccessDenied" class="org.zerock.sercurity.CustomAccessDeniedHandler"></bean>
+<!--  <bean id="customPasswordEncoder" class="org.zerock.sercurity.CustomNoOpPasswordEncoder"></bean> -->
+<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
+<bean id="customUserDetailService" class="org.zerock.sercurity.CustomUserDetailsService"/>
+
 <security:http>
 	<security:intercept-url pattern="/sample/all" access="permitAll"/>
 	
-	<security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
+	<security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MANAGER')"/>
 	<!-- hasRole('') <= 표현식 -->
 	<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
 	
 	<!--  <security:form-login/> --><!-- spring 기본 제공 login 페이지 사용(only for test) -->
-	<security:form-login login-page="/customLogin" authentication-success-handler-ref="customLoginSuccess"/> <!-- custom login page, login success시 요청 직접 처리  customLoginSuccess : bean -->
+	<security:form-login login-page="/customLogin" authentication-success-handler-ref="customLoginSuccess" /> <!-- custom login page, login success시 요청 직접 처리  customLoginSuccess : bean -->
 	<!-- 에러 발생시 error 파라미터에 빈문자열 리턴(/customLogin?error) -->
 	
 	<!--  <security:access-denied-handler error-page="/accessError" /> --> <!-- 단순히 에러페이지 띄우기 -->
@@ -28,19 +32,57 @@
 	<!--  <security:logout logout-url="/customLogout" logout-success-url="/"  invalidate-session="true"/> -->
 	<!-- 로그아웃 성공시 메인 페이지로 이동, 로그아웃 파라미터 x -->
 	
-	<security:logout logout-url="/customLogout" success-handler-ref="customLogoutSuccess"  invalidate-session="true"/>
+	<security:logout logout-url="/customLogout" success-handler-ref="customLogoutSuccess"  
+	invalidate-session="true" delete-cookies="remember-me,JSESSION_ID"/>
 	<!-- 로그아웃 성공시 핸들러 호출-->
 	
+	<security:remember-me data-source-ref="dataSource"  token-validity-seconds="604800"/>
+	<!-- 자동로그인 -->
 </security:http>
 
+<!-- xml에 user 직접 매핑 
 <security:authentication-manager>
 	<security:authentication-provider>
 		<security:user-service>
-			<security:user name="member" password="{noop}member" authorities="ROLE_MEMBER"/>
-			<!-- security:user <= userServiceInterface ; user id,pw,권한 지정 후 로그인 로직 처리 후 인가 -->
-			<!-- spring security 5.0 이후로 passwordEncoder 필요함  -> {noop}: 인코더 지정안한다는 의미 -->
-			<security:user name="admin" password="{noop}admin" authorities="ROLE_MEMBER, ROLE_ADMIN"/>
+			<security:user name="member" password="{noop}member" authorities="ROLE_MANAGER"/>
+			- security:user <= userServiceInterface ; user id,pw,권한 지정 후 로그인 로직 처리 후 인가 -
+			- spring security 5.0 이후로 passwordEncoder 필요함  -> {noop}: 인코더 지정안한다는 의미 -
+			<security:user name="admin" password="{noop}admin" authorities="ROLE_MANAGER, ROLE_ADMIN"/>
 		</security:user-service>
+	</security:authentication-provider>
+</security:authentication-manager> -->
+
+<!-- spring security포맷에 맞춘 db테이블(users,autorities) 사용 
+<security:authentication-manager>
+	<security:authentication-provider>
+		<security:jdbc-user-service data-source-ref="dataSource" /> <!- dataSource: root-context에 정의됨 ->
+		<security:password-encoder ref="customPasswordEncoder"/>
+	</security:authentication-provider>
+</security:authentication-manager> -->
+
+<!-- 기존의 db 테이블 사용 (jdbc-user-detail-service) -->
+<!--  
+<security:authentication-manager>
+	<security:authentication-provider>
+		<security:jdbc-user-service data-source-ref="dataSource" 
+		users-by-username-query="select userid, userpw, enabled from tbl_member where userid = ? " 
+		authorities-by-username-query="select userid, auth from tbl_member_auth where userid = ? " /> 
+		<!- dataSource: root-context에 정의됨 ->
+		<!- users-by-username-query : user 테이블에서 아이디 가져오는 동작 ->
+		<!- authorities-by-username-query : 권한 테이블에서 아이디에 해당하는 권한 가져오는 동작 ->
+		<!-  query(정보 가져오기) -> userdetailsmanager(인증(자동)) ->
+		<security:password-encoder ref="bcryptPasswordEncoder"/>
+	</security:authentication-provider>
+</security:authentication-manager>-->
+<!-- 문제점 : 쿼리를 넣어줘야해서 xml이 더러워짐, 인증에 username,password 밖에 못씀 -->
+
+
+<!-- userDetailService 직접 등록해서 사용-->
+<security:authentication-manager >
+
+	<security:authentication-provider user-service-ref="customUserDetailService" >
+		
+		<security:password-encoder ref="bcryptPasswordEncoder"/>
 	</security:authentication-provider>
 </security:authentication-manager>
 

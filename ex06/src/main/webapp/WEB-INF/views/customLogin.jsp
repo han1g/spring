@@ -20,6 +20,9 @@
 		<input type="text" name="password" value="admin">
 	</div>
 	<div>
+		<input type="checkbox" name="remember-me"> 자동로그인
+	</div>
+	<div>
 		<input type="submit">
 	</div>
 	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" >
