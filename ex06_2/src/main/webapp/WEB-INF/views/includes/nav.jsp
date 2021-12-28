@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 <!-- Navigation -->
 <nav class="navbar navbar-default navbar-static-top" role="navigation"
 	style="margin-bottom: 0">
@@ -182,8 +185,19 @@
 						Profile</a></li>
 				<li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a></li>
 				<li class="divider"></li>
-				<li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i>
-						Logout</a></li>
+				
+				<li>
+					<sec:authorize access="isAuthenticated()">
+						<a href="javascript:logout.submit();"><i class="fa fa-sign-out fa-fw"></i>Logout</a>
+						<form name="logout" action="/customLogout" method="post">
+							<sec:csrfInput/>
+						</form>
+					</sec:authorize>
+					<sec:authorize access="isAnonymous()">
+						<a href="/customLogin"><i class="fa fa-sign-in fa-fw"></i>Login</a>
+					</sec:authorize>
+				</li>
+						
 			</ul> <!-- /.dropdown-user --></li>
 		<!-- /.dropdown -->
 	</ul>

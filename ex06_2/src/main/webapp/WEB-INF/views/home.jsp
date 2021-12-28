@@ -6,6 +6,9 @@
 	<%@ include file="includes/import.jsp" %>
 </head>
 <body>
+<script>
+	location.href = "/board/list";
+</script>
 <h1>
 	Hello world!  
 </h1>

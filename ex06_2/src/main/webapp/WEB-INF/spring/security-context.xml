@@ -6,21 +6,17 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 		
 <bean id="customLogoutSuccess" class="org.zerock.security.CustomLogoutSuccessHandler"></bean>		
-<bean id="customLoginSuccess" class="org.zerock.security.CustomLoginSuccessHandler"></bean>
+<bean id="loginSuccess" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler"></bean>
 <bean id="customAccessDenied" class="org.zerock.security.CustomAccessDeniedHandler"></bean>
-<!--  <bean id="customPasswordEncoder" class="org.zerock.sercurity.CustomNoOpPasswordEncoder"></bean> -->
+<!--  <bean id="customPasswordEncoder" class="org.zerock.security.CustomNoOpPasswordEncoder"></bean> -->
 <bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
 <bean id="customUserDetailService" class="org.zerock.security.CustomUserDetailsService"/>
 
 <security:http>
-	<security:intercept-url pattern="/sample/all" access="permitAll"/>
 	
-	<security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MANAGER')"/>
-	<!-- hasRole('') <= 표현식 -->
-	<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
 	
 	<!--  <security:form-login/> --><!-- spring 기본 제공 login 페이지 사용(only for test) -->
-	<security:form-login login-page="/customLogin" authentication-success-handler-ref="customLoginSuccess" /> <!-- custom login page, login success시 요청 직접 처리  customLoginSuccess : bean -->
+	<security:form-login login-page="/customLogin" authentication-success-handler-ref="loginSuccess"/> <!-- custom login page, login success시 요청 직접 처리  customLoginSuccess : bean -->
 	<!-- 에러 발생시 error 파라미터에 빈문자열 리턴(/customLogin?error) -->
 	
 	<!--  <security:access-denied-handler error-page="/accessError" /> --> <!-- 단순히 에러페이지 띄우기 -->
@@ -78,7 +74,7 @@
 
 
 <!-- userDetailService 직접 등록해서 사용-->
-<security:authentication-manager >
+<security:authentication-manager  >
 
 	<security:authentication-provider user-service-ref="customUserDetailService" >
 		

@@ -2,6 +2,15 @@
 
 var attachmentService = (function() {
 	/**
+	 * jsp페이지에서 value 받기
+	 * @param
+	 * @returns
+	 */
+	function loadJspValue(values) {
+		csrfHeaderName = values.csrfHeaderName;
+		csrfTokenValue = values.csrfTokenValue;
+	}
+	/**
 	 * 썸네일 클릭했을 때 커지게함
 	 * @param fileCallPath
 	 * @returns
@@ -127,6 +136,10 @@ var attachmentService = (function() {
 			url: '/uploadFormAction',
 			processData: false, // 이거 
 			contentType: false, // 둘다 false로 해야됨
+			beforesend: function(xhr) {
+				console.log(csrf);
+				xhr.setRequestHeader(csrf.csrfHeaderName,csrf.csrfTokenValue);//csrfToken setting in ajax request
+			},
 			data: formData,
 			type: 'POST',
 			datatype: 'json',//response datatype
@@ -138,7 +151,7 @@ var attachmentService = (function() {
 			complete: function() {
 				console.log("complete");
 				$(".uploadDiv").html(initForm.html());
-				$("#file-input").change(formChanged);//버튼에 등록했을 때와는 다르게 자기 자신을 처음상태로 되돌리므로, 이벤트 리스너도 다시 등록해줘야함
+				$("#file-input").change(function(e) {formChanged(e,initForm);});//버튼에 등록했을 때와는 다르게 자기 자신을 처음상태로 되돌리므로, 이벤트 리스너도 다시 등록해줘야함
 			}
 		});//$.ajax
 	}

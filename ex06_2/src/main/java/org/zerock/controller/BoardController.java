@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.zerock.domain.BoardAttachVO;
 import org.zerock.domain.BoardVO;
 import org.zerock.domain.Criteria;
+import org.zerock.domain.CustomUser;
 import org.zerock.domain.PageDTO;
 import org.zerock.service.BoardService;
 
@@ -33,6 +34,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -78,6 +82,7 @@ public class BoardController {
 		
 	}
 	
+	@PreAuthorize(value = "principal.username == #writer")
 	@PostMapping("/remove")
 	public String remove(@RequestParam("bno") Long bno,Criteria cri, RedirectAttributes rttr) {
 		log.info("get");
@@ -104,6 +109,7 @@ public class BoardController {
 	}
 	
 	@PostMapping("/modify")
+	@PreAuthorize(value = "principal.username == #writer")
 	public String modify(BoardVO board, Criteria cri, RedirectAttributes rttr) {
 		//request body 뿐만아니라 url 파라미터도 같이 받음
 		log.info("modifyPost : " + board);
@@ -120,6 +126,7 @@ public class BoardController {
 	}
 	
 	@GetMapping("/modify")
+	@PreAuthorize(value = "isAuthenticated()")
 	public ModelAndView modify(@RequestParam("bno") Long bno, @ModelAttribute("cri") Criteria cri, ModelAndView model) {
 		log.info("modifyGet");
 		model.addObject("board",service.get(bno));
@@ -127,15 +134,21 @@ public class BoardController {
 		//(board/list)요청의 모델에 result가 추가됨
 	}
 	
+	
+	@PreAuthorize(value = "isAuthenticated()")
 	@GetMapping("/register")
 	public void register() {
-		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		log.info(auth.getPrincipal());
 	}
 
 	
-	
+	@PreAuthorize(value = "isAuthenticated()")
 	@PostMapping("/register")
 	public String register(BoardVO board, RedirectAttributes rttr) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		CustomUser princial = (CustomUser)auth.getPrincipal();
+		board.setWriter(princial.getMember().getUserid());//html 수정해서 작성자 아이디 바꾸는 거 방지
 		log.info("register : " + board);
 		service.register(board);
 		rttr.addFlashAttribute("result", board.getBno());

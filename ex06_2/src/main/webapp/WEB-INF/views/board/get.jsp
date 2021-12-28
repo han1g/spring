@@ -2,6 +2,8 @@
 	pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
+<sec:authentication property="principal" var="pinfo"/>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -58,7 +60,11 @@
 								<input type="hidden" name="type" value="<c:out value="${cri.type}"/>"/>
 								<input type="hidden" name="keyword" value="<c:out value="${cri.keyword}"/>"/>
 								<div class="form-group">
+								<sec:authorize access="isAuthenticated()"><!-- 이거 안하면 pinfo에 username없어서 개지랄남 -->
+								<c:if test="${pinfo.username eq board.writer}">
 									<button class="btn btn-default" data-oper="modify">Modify</button>
+								</c:if>
+								</sec:authorize>
 									<button class="btn btn-default" data-oper="list">List</button>
 								</div>
 							</form>
@@ -91,7 +97,9 @@
 				<div class="col-lg-12">
 					<div class="panel panel-default">
 						<div class="panel-heading"><i class="fa fa-comments fa-fw"></i>Reply
-						<button id="addReplyBtn" class="btn btn-xs pull-right">New reply</button>
+						<sec:authorize access="isAuthenticated()">
+							<button id="addReplyBtn" class="btn btn-xs pull-right">New reply</button>
+						</sec:authorize>
 						</div>
 						<!-- /.panel-heading -->
 						<div class="panel-body">
@@ -163,7 +171,7 @@
 	<script type="text/javascript" src="/resources/js/reply.js"></script>
 	<script>
 		var bnoValue = '<c:out value="${board.bno}"/>';
-		loadReply(bnoValue,replyService);
+		loadReply({bnoValue : bnoValue, replyService : replyService});
 	</script>
 	<!-- reply logics end-->
 	<!-- attachment logics -->

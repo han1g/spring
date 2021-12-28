@@ -27,7 +27,7 @@ public class OtherTests {
 	
 	@Test
 	public void taskTest() throws Exception {
-		task.checkFiles();
+		task.checkFiles(7);
 		
 		
 	}

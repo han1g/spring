@@ -11,4 +11,7 @@
 
 <P>  The time on the server is ${serverTime}. </P>
 </body>
+<form action="/controller" method="post">
+	<input type="submit">
+</form>
 </html>

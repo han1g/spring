@@ -1,4 +1,4 @@
-package org.zerock.sercurity;
+package org.zerock.security;
 
 import java.io.IOException;
 
@@ -21,7 +21,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler{
 		log.info("Access Denied Handler");
 		
 		;//spring 컨트롤러로 들어가기전이라 root가 "/"임
-		response.sendRedirect("/controller/accessError");
+		//response.sendRedirect("/controller/accessError");
 	}
 	
 }

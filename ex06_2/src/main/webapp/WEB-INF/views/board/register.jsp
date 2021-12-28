@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -44,12 +45,13 @@
 								</div>
 								<div class="form-group">
 									<label for="writer">Writer</label>
-									<input id="writer" class="form-control" name="writer"/>
+									<input id="writer" class="form-control" name="writer" readonly="readonly" value='<sec:authentication property="principal.username"/>'/>
 								</div>
 								<div class="form-group">
 									<button id="registerBtn" type="submit" class="btn btn-default">Submit</button>
 									<button type="reset" class="btn btn-default">Reset</button>
 								</div>
+								<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 							</form>
 						</div>
 						<!-- /.panel-body -->

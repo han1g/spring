@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -64,6 +65,9 @@ public class UploadController {
 		
 	}
 	
+	//따로 체크 안해도 로그인 필요한 url에서 오는 ajax요청 또한 csrf보안이 적용됨
+	//외부에서 직접요청하는 건 막아야 하므로 체크는 해줌
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping(value = {"/uploadFormAction","/relative/uploadFormAction"}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseEntity<List<BoardAttachVO>> uploadFormPost(MultipartFile[] uploadFile) throws IOException {
 		String datePath = getFolder();
@@ -149,6 +153,7 @@ public class UploadController {
 		return new ResponseEntity<Resource>(resource,headers,HttpStatus.OK);
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("deleteFile")
 	@ResponseBody
 	public ResponseEntity<String> deleteFile(String fileName,boolean type) {

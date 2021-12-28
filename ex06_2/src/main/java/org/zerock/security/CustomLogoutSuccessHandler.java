@@ -1,4 +1,4 @@
-package org.zerock.sercurity;
+package org.zerock.security;
 
 import java.io.IOException;
 
@@ -19,10 +19,14 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 	@Override
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException, ServletException {
+		log.info("logoutSuccess");
 		// TODO Auto-generated method stubee
-		authentication.getAuthorities().forEach(log::info);
-		
-		response.sendRedirect("/controller");
+		if(authentication != null) {
+			authentication.getAuthorities().forEach(log::info);
+		}
+		String referer = request.getHeader("Referer");
+		log.info(referer);
+		response.sendRedirect(referer);
 	}
 
 }

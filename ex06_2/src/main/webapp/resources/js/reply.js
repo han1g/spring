@@ -2,7 +2,13 @@
  * needs replyModule.js
  */
 
-function loadReply(bnoValue,replyService) {
+function loadReply(values) {
+	var bnoValue = values.bnoValue;
+	var replyService = values.replyService;
+	var csrfHeaderName;
+	var csrfTokenValue;
+	//////////////////global variables//////////////////////
+	
 $(document).ready(function() {
 			//리스트, 페이징 처리
 

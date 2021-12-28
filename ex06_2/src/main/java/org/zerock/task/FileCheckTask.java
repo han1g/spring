@@ -80,6 +80,7 @@ public class FileCheckTask {
 		File[] targetDirFileList = targetDir.listFiles();
 		getRemoveFiles(targetDirFileList, fileListPath).forEach(File::delete);
 	}
+	
 	@Scheduled(cron="0 0 2 * * *")
 	public void checkFiles() throws Exception {
 		log.warn("오전 2시마다 실행---------------------------------");

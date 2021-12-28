@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -30,8 +31,9 @@
 						<!-- /.panel-heading -->
 						<div class="panel-body">
 							<form id="modify-main" role="form" action="" method="post">
-							<input type="hidden" class="form-control" name="bno" 
-									value='<c:out value="${board.bno}"></c:out>'/>
+								<sec:csrfInput/>
+								<input type="hidden" class="form-control" name="bno" 
+										value='<c:out value="${board.bno}"></c:out>'/>
 								<div class="form-group">
 									<label for="title">Title</label>
 									<input id="title" class="form-control" name="title" 
@@ -51,8 +53,12 @@
 								<input type="hidden" name="type" value="<c:out value="${cri.type}"/>"/>
 								<input type="hidden" name="keyword" value="<c:out value="${cri.keyword}"/>"/>
 								<div class="form-group">
-									<button class="btn btn-default" data-oper="modify">Modify</button>
-									<button class="btn btn-default" data-oper="remove">Remove</button>
+									<sec:authorize access="isAuthenticated()"><!-- 이거 안하면 pinfo에 username없어서 개지랄남 -->
+									<c:if test="${pinfo.username eq board.writer}">
+										<button class="btn btn-default" data-oper="modify">Modify</button>
+										<button class="btn btn-default" data-oper="remove">Remove</button>
+									</c:if>
+									</sec:authorize>
 									<button class="btn btn-default" data-oper="list">List</button>
 								</div>
 							</form>
@@ -92,8 +98,9 @@
 	<!-- attachment logics -->
 	<script type="text/javascript" src="/resources/js/attachmentModule.js"></script>
 	<script>
-		var bnoValue = bnoValue = '<c:out value="${board.bno}"/>';
+		var bnoValue = '<c:out value="${board.bno}"/>';
 		$(document).ready(function() {
+			
 			attachmentService.getAttachment(bnoValue,true);
 			
 		});
