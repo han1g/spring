@@ -37,7 +37,6 @@ import net.coobird.thumbnailator.Thumbnailator;
 @Controller
 @Log4j
 public class UploadController {
-	
 	@GetMapping({"/uploadForm","/relative/uploadForm","/uploadAjax"})
 	public void uploadForm() {
 		
@@ -68,7 +67,7 @@ public class UploadController {
 	public @ResponseBody ResponseEntity<List<BoardAttachVO>> uploadFormPost(MultipartFile[] uploadFile) throws IOException {
 		String datePath = getFolder();
 		File uploadPath = new File("C:\\upload\\temp",datePath);
-		if(!uploadPath.exists()) {//¿©±â´Â root°¡ C
+		if(!uploadPath.exists()) {//ï¿½ï¿½ï¿½ï¿½ï¿½ rootï¿½ï¿½ C
 			log.info(uploadPath.mkdirs());//recursive
 		}
 		
@@ -76,12 +75,12 @@ public class UploadController {
 		ArrayList<BoardAttachVO> retList = new ArrayList<>(); 
 		for(MultipartFile multipartFile : uploadFile) {
 			String fileName = multipartFile.getOriginalFilename();
-			log.info(multipartFile.getName());//<ÆÄ¶ó¹ÌÅÍ¸í>
-			log.info(fileName);//¿Ã¸®´Â ÆÄÀÏ ÀÌ¸§
-			log.info(multipartFile.isEmpty());//ÆÄÀÏÀÌ ¾øÀ½
-			log.info(multipartFile.getSize());//ÆÄÀÏÅ©±â
-			log.info(multipartFile.getBytes().length);//¹ÙÀÌÆ® ¹è¿­·Î º¯È¯
-			log.info(multipartFile.getInputStream());//ÆÄÀÏµ¥ÀÌÅÍ¸¦ ¹Ş´Â inputstream
+			log.info(multipartFile.getName());//<ï¿½Ä¶ï¿½ï¿½ï¿½Í¸ï¿½>
+			log.info(fileName);//ï¿½Ã¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
+			log.info(multipartFile.isEmpty());//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			log.info(multipartFile.getSize());//ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½
+			log.info(multipartFile.getBytes().length);//ï¿½ï¿½ï¿½ï¿½Æ® ï¿½è¿­ï¿½ï¿½ ï¿½ï¿½È¯
+			log.info(multipartFile.getInputStream());//ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Ş´ï¿½ inputstream
 			
 			
 			
@@ -124,7 +123,7 @@ public class UploadController {
 		try {
 			HttpHeaders header = new HttpHeaders();
 			log.info(Files.probeContentType(file.toPath()));
-			header.add("Content-Type",Files.probeContentType(file.toPath()));//ÀÌ¹ÌÁöÀÇ MIME
+			header.add("Content-Type",Files.probeContentType(file.toPath()));//ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ MIME
 			result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file),header,HttpStatus.OK);
 		} catch (IOException e) {
 			e.printStackTrace();// TODO: handle exception
@@ -141,9 +140,9 @@ public class UploadController {
 		Resource resource = new FileSystemResource("C:\\upload\\temp\\" + pathAndUuid + "_" + fileName);
 		log.info(resource.contentLength());
 		
-		String resourceName = URLEncoder.encode(fileName,"UTF-8").replace("+", "%20");//urlEncoder·Î ÀÎÄÚµùÇÏ¸é °ø¹éÀÌ +·Î ¹Ù²ñ
+		String resourceName = URLEncoder.encode(fileName,"UTF-8").replace("+", "%20");//urlEncoder ë„ì–´ì“°ê¸°ê°€ +ë¡œ ë¨
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Content-Disposition", "attachment;filename*= UTF-8''" + resourceName);//ÆÄÀÏ¸í ÀÎÄÚµù Çì´õ¿¡´Ù Á÷Á¢ÁöÁ¤
+		headers.add("Content-Disposition", "attachment;filename*= UTF-8''" + resourceName);//ë‹¤ìš´ë¡œë“œ íŒŒì¼ ì¸ì½”ë”©
 		log.info(resourceName);
 		
 		return new ResponseEntity<Resource>(resource,headers,HttpStatus.OK);
